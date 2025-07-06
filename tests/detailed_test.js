@@ -4,12 +4,16 @@ const Versalog = require('versalog');
 const logger = new Versalog('detailed', false);
 
 logger.info('情報ログ');
-logger.err('エラーログ');
-logger.war('警告ログ');
+logger.error('エラーログ');
+logger.warning('警告ログ');
+logger.debug('デバッグログ');
+logger.critical('クリティカルログ');
 
 // show_file true
 const logger = new Versalog('detailed', true);
 
 logger.info('情報ログ');
-logger.err('エラーログ');
-logger.war('警告ログ');
+logger.error('エラーログ');
+logger.warning('警告ログ');
+logger.debug('デバッグログ');
+logger.critical('クリティカルログ');

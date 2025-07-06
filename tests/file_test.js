@@ -5,3 +5,5 @@ const logger = new Versalog('file');
 logger.info('情報ログ');
 logger.err('エラーログ');
 logger.war('警告ログ');
+logger.debug('デバッグログ');
+logger.critical('クリティカルログ');
