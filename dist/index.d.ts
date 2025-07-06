@@ -6,7 +6,9 @@ declare class Versalog {
     private GetCaller;
     private Log;
     info(msg: string): void;
-    err(msg: string): void;
-    war(msg: string): void;
+    error(msg: string): void;
+    warning(msg: string): void;
+    debug(msg: string): void;
+    critical(msg: string): void;
 }
 export = Versalog;

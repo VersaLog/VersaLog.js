@@ -3,13 +3,17 @@ import { format } from "date-fns";
 const COLORS: Record<string, string> = {
     "INFO": "\x1b[32m",
     "ERROR": "\x1b[31m",
-    "WARNING": "\x1b[33m"
+    "WARNING": "\x1b[33m",
+    "DEBUG": "\x1b[36m",
+    "CRITICAL": "\x1b[35m",
 }
 
 const SYMBOLS: Record<string, string> = {
     "INFO": "[+]",
     "ERROR": "[-]",
     "WARNING": "[!]",
+    "DEBUG": "[D]",
+    "CRITICAL": "[C]",
 }
 
 const RESET = "\x1b[0m"
@@ -21,6 +25,11 @@ class Versalog {
     constructor(mode: string = "simple", show_file: boolean = false) {
         this.mode = mode.toLowerCase();
         this.show_file = show_file;
+
+        const valid_modes = ["simple", "detailed", "file"];
+        if (!valid_modes.includes(this.mode)) {
+            throw new Error(`Invalid mode '${this.mode}' specified. Valid modes are: ${valid_modes.join(", ")}`);
+        }
     }
 
     private GetTime(): string {
@@ -71,12 +80,20 @@ class Versalog {
         this.Log(msg, "INFO");
     }
 
-    public err(msg: string): void {
+    public error(msg: string): void {
         this.Log(msg, "ERROR");
     }
 
-    public war(msg: string): void {
+    public warning(msg: string): void {
         this.Log(msg, "WARNING");
+    }
+
+    public debug(msg: string): void {
+        this.Log(msg, "DEBUG");
+    }
+
+    public critical(msg: string): void {
+        this.Log(msg, "CRITICAL");
     }
 }
 

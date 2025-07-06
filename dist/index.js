@@ -3,18 +3,26 @@ const date_fns_1 = require("date-fns");
 const COLORS = {
     "INFO": "\x1b[32m",
     "ERROR": "\x1b[31m",
-    "WARNING": "\x1b[33m"
+    "WARNING": "\x1b[33m",
+    "DEBUG": "\x1b[36m",
+    "CRITICAL": "\x1b[35m",
 };
 const SYMBOLS = {
     "INFO": "[+]",
     "ERROR": "[-]",
     "WARNING": "[!]",
+    "DEBUG": "[D]",
+    "CRITICAL": "[C]",
 };
 const RESET = "\x1b[0m";
 class Versalog {
     constructor(mode = "simple", show_file = false) {
         this.mode = mode.toLowerCase();
         this.show_file = show_file;
+        const valid_modes = ["simple", "detailed", "file"];
+        if (!valid_modes.includes(this.mode)) {
+            throw new Error(`Invalid mode '${this.mode}' specified. Valid modes are: ${valid_modes.join(", ")}`);
+        }
     }
     GetTime() {
         return (0, date_fns_1.format)(new Date(), 'yyyy-MM-dd HH:mm:ss');
@@ -64,11 +72,17 @@ class Versalog {
     info(msg) {
         this.Log(msg, "INFO");
     }
-    err(msg) {
+    error(msg) {
         this.Log(msg, "ERROR");
     }
-    war(msg) {
+    warning(msg) {
         this.Log(msg, "WARNING");
+    }
+    debug(msg) {
+        this.Log(msg, "DEBUG");
+    }
+    critical(msg) {
+        this.Log(msg, "CRITICAL");
     }
 }
 module.exports = Versalog;
