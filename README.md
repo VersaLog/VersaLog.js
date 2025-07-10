@@ -1,23 +1,15 @@
-# VersaLog.js
+## What is VersaLog.js?
 
-![logo](/image/logo.png)
+VersaLog is a library that enables highly functional and flexible logging.
 
-## VersaLog.js とは
-
-多機能で柔軟なログを出力出来るライブラリです。
-
-[English](README-en.md)
-
-## インストール方法
+## Installation
 
 ```
 npm i versalog
 ```
 
-## サンプル
+## Sample
 
-**シンプル** : [タップ](/tests/simple_test.js)
-
-**ディーテイルド** : [タップ](/tests/detailed_test.js)
-
-**ファイル** : [タップ](/tests/file_test.js)
+**Simple** : [Tap](https://github.com/kayu0514/VersaLog.js/blob/main/tests/simple_test.js)  
+**Detailed** : [Tap](https://github.com/kayu0514/VersaLog.js/blob/main/tests/detailed_test.js)
+**File** : [Tap](https://github.com/kayu0514/VersaLog.js/blob/main/tests/file_test.js)

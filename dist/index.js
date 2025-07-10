@@ -16,22 +16,49 @@ const SYMBOLS = {
 };
 const RESET = "\x1b[0m";
 class Versalog {
-    constructor(mode = "simple", show_file = false) {
-        this.mode = mode.toLowerCase();
-        this.show_file = show_file;
-        const valid_modes = ["simple", "detailed", "file"];
-        if (!valid_modes.includes(this.mode)) {
-            throw new Error(`Invalid mode '${this.mode}' specified. Valid modes are: ${valid_modes.join(", ")}`);
+    constructor(mode = "simple", show_file = false, show_tag = false, tag = null, all = false) {
+        if (all) {
+            show_file = true;
+            show_tag = true;
         }
+        const valid_modes = ["simple", "detailed", "file"];
+        const lower_mode = mode.toLowerCase();
+        if (!valid_modes.includes(lower_mode)) {
+            throw new Error(`Invalid mode '${mode}'. Valid modes are: ${valid_modes.join(", ")}`);
+        }
+        this.mode = lower_mode;
+        this.show_file = show_file;
+        this.show_tag = show_tag;
+        this.tag = tag !== null && tag !== void 0 ? tag : "";
+    }
+    setConfig(options) {
+        if (options.all) {
+            this.show_file = true;
+            this.show_tag = true;
+        }
+        if (options.mode !== undefined) {
+            const valid_modes = ["simple", "detailed", "file"];
+            const lower = options.mode.toLowerCase();
+            if (!valid_modes.includes(lower)) {
+                throw new Error(`Invalid mode '${options.mode}'. Valid modes are: ${valid_modes.join(", ")}`);
+            }
+            this.mode = lower;
+        }
+        if (options.show_file !== undefined)
+            this.show_file = options.show_file;
+        if (options.show_tag !== undefined)
+            this.show_tag = options.show_tag;
+        if (options.tag !== undefined)
+            this.tag = options.tag;
     }
     GetTime() {
-        return (0, date_fns_1.format)(new Date(), 'yyyy-MM-dd HH:mm:ss');
+        return (0, date_fns_1.format)(new Date(), "yyyy-MM-dd HH:mm:ss");
     }
     GetCaller() {
-        var _a;
+        var _a, _b;
         const err = new Error();
-        const stack = (_a = err.stack) === null || _a === void 0 ? void 0 : _a.split('\n');
-        const callerLine = stack && stack[3] ? stack[3] : stack && stack[2] ? stack[2] : '';
+        const stack = (_a = err.stack) === null || _a === void 0 ? void 0 : _a.split("\n");
+        const callerLine = stack && stack[3] ? stack[3] : (_b = stack === null || stack === void 0 ? void 0 : stack[2]) !== null && _b !== void 0 ? _b : "";
         const match = callerLine.match(/\(([^)]+)\)/);
         if (match && match[1]) {
             const parts = match[1].split(":");
@@ -39,50 +66,55 @@ class Versalog {
             const line = parts[1];
             return `${file}:${line}`;
         }
-        return '';
+        return "";
     }
-    Log(msg, type) {
-        const colors = COLORS[type] || '';
+    Log(msg, type, tag) {
+        var _a, _b;
+        const color = (_a = COLORS[type]) !== null && _a !== void 0 ? _a : "";
+        const symbol = (_b = SYMBOLS[type]) !== null && _b !== void 0 ? _b : "[?]";
         const types = type.toUpperCase();
-        const symbol = SYMBOLS[type] || '[?]';
-        const caller = (this.show_file || this.mode === "file") ? this.GetCaller() : '';
-        let formatted = '';
+        const finalTag = tag !== null && tag !== void 0 ? tag : (this.show_tag ? this.tag : "");
+        const caller = this.show_file || this.mode === "file" ? this.GetCaller() : "";
+        let formatted = "";
         if (this.mode === "simple") {
             if (this.show_file) {
-                formatted = `[${caller}]${colors}${symbol}${RESET} ${msg}`;
+                formatted = `[${caller}]`;
+                if (finalTag)
+                    formatted += `[${finalTag}]`;
+                formatted += `${color}${symbol}${RESET} ${msg}`;
             }
             else {
-                formatted = `${colors}${symbol}${RESET} ${msg}`;
+                formatted = `${color}${symbol}${RESET} ${msg}`;
             }
         }
         else if (this.mode === "file") {
-            formatted = `[${caller}]${colors}[${types}]${RESET} ${msg}`;
+            formatted = `[${caller}]${color}[${types}]${RESET} ${msg}`;
         }
         else {
             const time = this.GetTime();
-            if (this.show_file) {
-                formatted = `[${time}]${colors}[${types}]${RESET}[${caller}] : ${msg}`;
-            }
-            else {
-                formatted = `[${time}]${colors}[${types}]${RESET} : ${msg}`;
-            }
+            formatted = `[${time}]${color}[${types}]${RESET}`;
+            if (finalTag)
+                formatted += `[${finalTag}]`;
+            if (this.show_file)
+                formatted += `[${caller}]`;
+            formatted += ` : ${msg}`;
         }
         console.log(formatted);
     }
-    info(msg) {
-        this.Log(msg, "INFO");
+    info(msg, tag) {
+        this.Log(msg, "INFO", tag);
     }
-    error(msg) {
-        this.Log(msg, "ERROR");
+    error(msg, tag) {
+        this.Log(msg, "ERROR", tag);
     }
-    warning(msg) {
-        this.Log(msg, "WARNING");
+    warning(msg, tag) {
+        this.Log(msg, "WARNING", tag);
     }
-    debug(msg) {
-        this.Log(msg, "DEBUG");
+    debug(msg, tag) {
+        this.Log(msg, "DEBUG", tag);
     }
-    critical(msg) {
-        this.Log(msg, "CRITICAL");
+    critical(msg, tag) {
+        this.Log(msg, "CRITICAL", tag);
     }
 }
 module.exports = Versalog;
