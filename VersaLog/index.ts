@@ -102,15 +102,16 @@ class Versalog {
         let formatted = "";
 
         if (this.mode === "simple") {
+            formatted = "";
             if (this.show_file) {
-                formatted = `[${caller}]`;
-                if (finalTag) formatted += `[${finalTag}]`;
-                formatted += `${color}${symbol}${RESET} ${msg}`;
-            } else {
-                formatted = `${color}${symbol}${RESET} ${msg}`;
+                formatted += `[${caller}]`;
             }
+            if (finalTag) formatted += `[${finalTag}]`;
+            formatted += `${color}${symbol}${RESET} ${msg}`;
         } else if (this.mode === "file") {
-            formatted = `[${caller}]${color}[${types}]${RESET} ${msg}`;
+            formatted = `[${caller}]`;
+            if (finalTag) formatted += `[${finalTag}]`;
+            formatted += `${color}[${types}]${RESET} ${msg}`;
         } else {
             const time = this.GetTime();
             formatted = `[${time}]${color}[${types}]${RESET}`;
