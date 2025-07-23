@@ -12,11 +12,13 @@
   "keywords": [],
   "devDependencies": {
     "@types/node": "^24.0.10",
+    "@types/node-notifier": "^8.0.5",
     "typescript": "^5.8.3"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
     "luxon": "^3.6.1",
+    "node-notifier": "^10.0.1",
     "pretty-format": "^30.0.2",
     "versalog": "^1.0.0"
   }
