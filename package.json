@@ -1,7 +1,7 @@
 {
   "name": "versalog",
-  "version": "1.4.2",
-  "description": "シンプルでカスタマイズ可能なNode.js用ロガー",
+  "version": "1.4.3",
+  "description": "A simple and customizable logger for Node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "kayu0514",

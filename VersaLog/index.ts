@@ -58,10 +58,10 @@ class Versalog {
         show_file?: boolean;
         show_tag?: boolean;
         tag?: string;
-        all?: boolean;
+        enable_all?: boolean;
         notice?: boolean;
     }): void {
-        if (options.all) {
+        if (options.enable_all) {
             this.show_file = true;
             this.show_tag = true;
             this.notice = true;
