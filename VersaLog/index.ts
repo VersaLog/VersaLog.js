@@ -40,7 +40,7 @@ class Versalog {
             notice = true;
         }
 
-        const valid_modes = ["simple", "detailed", "file"];
+        const valid_modes = ["simple", "simple2", "detailed", "file"];
         const lower_mode = mode.toLowerCase();
         if (!valid_modes.includes(lower_mode)) {
             throw new Error(`Invalid mode '${mode}'. Valid modes are: ${valid_modes.join(", ")}`);
@@ -124,6 +124,16 @@ class Versalog {
             }
             if (finalTag) formatted += `[${finalTag}]`;
             formatted += `${color}${symbol}${RESET} ${msg}`;
+        } else if (this.mode === "simple2") {
+            const time = this.GetTime();
+            if (this.show_file) {
+                formatted = `[${time}]`;
+                if (caller) formatted += ` [${caller}]`;
+                if (finalTag) formatted += `[${finalTag}]`;
+                formatted += `${color}${symbol}${RESET} ${msg}`;
+            } else {
+                formatted = `[${time}] ${color}${symbol}${RESET} ${msg}`;
+            }
         } else if (this.mode === "file") {
             formatted = `[${caller}]`;
             if (finalTag) formatted += `[${finalTag}]`;
