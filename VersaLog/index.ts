@@ -117,7 +117,7 @@ class Versalog {
 
     private save_log(log_text: string, level: string): void {
         if (!this.save_levels.includes(level)) return;
-        const logDir = path.join(__dirname, "..", "log");
+        const logDir = path.join(process.cwd(), "log");
         if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
         const dateStr = format(new Date(), "yyyy-MM-dd");
         const logFile = path.join(logDir, `${dateStr}.log`);
