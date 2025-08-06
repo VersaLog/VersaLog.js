@@ -184,6 +184,7 @@ class Versalog {
             plain += ` : ${msg}`;
         }
 
+        console.log(formatted)
         if (this.all_save && this.save_levels.includes(types)) {
             this.save_log(plain, types);
         }
