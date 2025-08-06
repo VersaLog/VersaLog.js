@@ -73,7 +73,7 @@ class Versalog {
         tag?: string;
         enable_all?: boolean;
         notice?: boolean;
-        all_save?: Boolean;
+        all_save?: boolean;
         save_levels?: string[];
     }): void {
         if (options.enable_all) {
@@ -95,6 +95,9 @@ class Versalog {
         if (options.show_tag !== undefined) this.show_tag = options.show_tag;
         if (options.tag !== undefined) this.tag = options.tag;
         if (options.notice !== undefined) this.notice = options.notice;
+        if (options.all_save !== undefined) this.all_save = options.all_save;
+        if (options.save_levels !== undefined) this.save_levels = options.save_levels;
+
     }
 
     private GetTime(): string {
