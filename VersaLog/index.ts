@@ -29,16 +29,22 @@ class Versalog {
     public notice: boolean;
     public all_save: boolean;
     public save_levels: string[];
+    public silent: boolean;
+    private log_queue: Array<{ log_text: string, level: string }> = [];
+    private is_worker_running: boolean = false;
+    private catch_exceptions: boolean;
 
     constructor(
         mode: string = "simple",
         show_file: boolean = false,
         show_tag: boolean = false,
         tag: string | null = null,
-        enable_all: boolean = false
-        , notice: boolean = false,
+        enable_all: boolean = false,
+        notice: boolean = false,
         all_save: boolean = false,
-        save_levels: string[] | null = null
+        save_levels: string[] | null = null,
+        silent: boolean = false,
+        catch_exceptions: boolean = false
     ) {
         if (enable_all) {
             show_file = true;
@@ -64,6 +70,16 @@ class Versalog {
         if (!Array.isArray(this.save_levels) || !this.save_levels.every(l => valid_save_levels.includes(l))) {
             throw new Error(`Invalid save_levels specified. Valid levels are: ${valid_save_levels.join(", ")}`);
         }
+        this.silent = silent;
+        this.catch_exceptions = catch_exceptions;
+        if (this.catch_exceptions) {
+            process.on('uncaughtException', (err) => {
+                this.critical(`Unhandled exception:\n${err.stack || err}`);
+            });
+            process.on('unhandledRejection', (reason: any) => {
+                this.critical(`Unhandled rejection:\n${reason?.stack || reason}`);
+            });
+        }
     }
 
     public setConfig(options: {
@@ -75,6 +91,8 @@ class Versalog {
         notice?: boolean;
         all_save?: boolean;
         save_levels?: string[];
+        silent?: boolean;
+        catch_exceptions?: boolean;
     }): void {
         if (options.enable_all) {
             this.show_file = true;
@@ -97,7 +115,18 @@ class Versalog {
         if (options.notice !== undefined) this.notice = options.notice;
         if (options.all_save !== undefined) this.all_save = options.all_save;
         if (options.save_levels !== undefined) this.save_levels = options.save_levels;
-
+        if (options.silent !== undefined) this.silent = options.silent;
+        if (options.catch_exceptions !== undefined) {
+            this.catch_exceptions = options.catch_exceptions;
+            if (this.catch_exceptions) {
+                process.on('uncaughtException', (err) => {
+                    this.critical(`Unhandled exception:\n${err.stack || err}`);
+                });
+                process.on('unhandledRejection', (reason: any) => {
+                    this.critical(`Unhandled rejection:\n${reason?.stack || reason}`);
+                });
+            }
+        }
     }
 
     private GetTime(): string {
@@ -120,11 +149,28 @@ class Versalog {
 
     private save_log(log_text: string, level: string): void {
         if (!this.save_levels.includes(level)) return;
-        const logDir = path.join(process.cwd(), "log");
-        if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
-        const dateStr = format(new Date(), "yyyy-MM-dd");
-        const logFile = path.join(logDir, `${dateStr}.log`);
-        fs.appendFileSync(logFile, log_text + "\n", { encoding: "utf-8" });
+        this.log_queue.push({ log_text, level });
+        this.run_worker();
+    }
+
+    private run_worker() {
+        if (this.is_worker_running) return;
+        this.is_worker_running = true;
+        const processQueue = () => {
+            if (this.log_queue.length === 0) {
+                this.is_worker_running = false;
+                return;
+            }
+            const { log_text, level } = this.log_queue.shift()!;
+            const logDir = path.join(process.cwd(), "log");
+            if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+            const dateStr = format(new Date(), "yyyy-MM-dd");
+            const logFile = path.join(logDir, `${dateStr}.log`);
+            fs.appendFile(logFile, log_text + "\n", { encoding: "utf-8" }, () => {
+                setImmediate(processQueue);
+            });
+        };
+        setImmediate(processQueue);
     }
 
     private Log(msg: string, tye: string, tag?: string): void {
@@ -187,7 +233,9 @@ class Versalog {
             plain += ` : ${msg}`;
         }
 
-        console.log(formatted)
+        if (!this.silent) {
+            console.log(formatted);
+        }
         if (this.all_save && this.save_levels.includes(types)) {
             this.save_log(plain, types);
         }

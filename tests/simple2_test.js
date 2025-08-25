@@ -96,6 +96,41 @@ logger.warning('警告ログ');
 logger.debug('デバッグログ');
 logger.critical('クリティカルログ');
 
+// silent False
+const logger = new Versalog();
+logger.setConfig({
+    show_file: false,
+    show_tag: false,
+    notice: true,
+    silent: false,
+    tag: null,
+    mode: "simple2"
+})
+
+logger.info('情報ログ');
+logger.error('エラーログ');
+logger.warning('警告ログ');
+logger.debug('デバッグログ');
+logger.critical('クリティカルログ');
+
+// silent False
+const logger = new Versalog();
+logger.setConfig({
+    show_file: false,
+    show_tag: false,
+    notice: true,
+    silent: true,
+    all_save: true,
+    tag: null,
+    mode: "simple2"
+})
+
+logger.info('情報ログ');
+logger.error('エラーログ');
+logger.warning('警告ログ');
+logger.debug('デバッグログ');
+logger.critical('クリティカルログ');
+
 // enable_all true
 const logger = new Versalog();
 logger.setConfig({
