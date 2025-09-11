@@ -33,6 +33,7 @@ class Versalog {
     private log_queue: Array<{ log_text: string, level: string }> = [];
     private is_worker_running: boolean = false;
     private catch_exceptions: boolean;
+    private last_cleanup_date: string | null = null;
 
     constructor(
         mode: string = "simple",
@@ -151,6 +152,12 @@ class Versalog {
         if (!this.save_levels.includes(level)) return;
         this.log_queue.push({ log_text, level });
         this.run_worker();
+
+        const today = format(new Date(), "yyyy-MM-dd");
+        if (this.last_cleanup_date !== today) {
+            this.cleanup_old_logs(7);
+            this.last_cleanup_date = today;
+        }
     }
 
     private run_worker() {
@@ -171,6 +178,35 @@ class Versalog {
             });
         };
         setImmediate(processQueue);
+    }
+
+    private cleanup_old_logs(days: number = 7): void {
+        const logDir = path.join(process.cwd(), "log");
+        if (!fs.existsSync(logDir)) return;
+
+        const now = new Date();
+        fs.readdirSync(logDir).forEach(filename => {
+            if (!filename.endsWith(".log")) return;
+            const filepath = path.join(logDir, filename);
+
+            let fileDate: Date;
+            try {
+                fileDate = new Date(filename.replace(".log", ""));
+                if (isNaN(fileDate.getTime())) throw new Error();
+            } catch {
+                fileDate = new Date(fs.statSync(filepath).mtime);
+            }
+
+            const diffDays = (now.getTime() - fileDate.getTime()) / (1000 * 60 * 60 * 24);
+            if (diffDays >= days) {
+                try {
+                    fs.unlinkSync(filepath);
+                    if (!this.silent) this.info(`[LOG CLEANUP] removed: ${filepath}`);
+                } catch (e) {
+                    if (!this.silent) this.warning(`[LOG CLEANUP WARNING] ${filepath} cannot be removed: ${e}`);
+                }
+            }
+        });
     }
 
     private Log(msg: string, tye: string, tag?: string): void {
