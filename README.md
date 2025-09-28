@@ -3,6 +3,10 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
+[![npm version](https://img.shields.io/npm/v/versalog.svg?style=flat-square)](https://www.npmjs.com/package/versalog)
+[![npm downloads](https://img.shields.io/npm/dm/versalog.svg?style=flat-square)](https://www.npmjs.com/package/versalog)
+[![npm downloads](https://img.shields.io/npm/dt/versalog.svg?style=flat-square)](https://www.npmjs.com/package/versalog)
+
 What is VersaLog.js?
 VersaLog is a powerful and flexible logging library for JavaScript.
 It supports everything from simple usage to advanced, highly customizable configurations to meet a wide range of needs.
@@ -41,12 +45,6 @@ npm i versalog
 ```
 [2025-08-06 04:10:36][INFO] : ok
 ```
-
-## Sample
-
-**Simple** : [Tap](https://github.com/kayu0514/VersaLog.js/blob/main/tests/simple_test.js)  
-**Detailed** : [Tap](https://github.com/kayu0514/VersaLog.js/blob/main/tests/detailed_test.js)
-**File** : [Tap](https://github.com/kayu0514/VersaLog.js/blob/main/tests/file_test.js)
 
 ## Contributors ✨
 
