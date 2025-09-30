@@ -133,9 +133,9 @@ logger.critical("クリティカルログ");
 // enable_all true
 const logger = new Versalog();
 logger.setConfig({
-    enable_all: true,
-    tag: "VersaLog",
-    mode: "file",
+  enable_all: true,
+  tag: "VersaLog",
+  mode: "file",
 });
 
 logger.info("情報ログ");
