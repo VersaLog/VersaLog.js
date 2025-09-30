@@ -1,5 +1,5 @@
-type LogMode = 'simple' | 'simple2' | 'detailed' | 'file';
-type LogLevel = 'INFO' | 'ERROR' | 'WARNING' | 'DEBUG' | 'CRITICAL';
+type LogMode = "simple" | "simple2" | "detailed" | "file";
+type LogLevel = "INFO" | "ERROR" | "WARNING" | "DEBUG" | "CRITICAL";
 import { format } from "date-fns";
 const notifier = require("node-notifier");
 import * as fs from "fs";
@@ -45,7 +45,7 @@ class Versalog {
   private last_cleanup_date: string | null = null;
 
   constructor(
-    mode: LogMode = 'simple',
+    mode: LogMode = "simple",
     show_file: boolean = false,
     show_tag: boolean = false,
     tag: string | null = null,
@@ -63,7 +63,7 @@ class Versalog {
       all_save = true;
     }
 
-    const valid_modes: LogMode[] = ['simple', 'simple2', 'detailed', 'file'];
+    const valid_modes: LogMode[] = ["simple", "simple2", "detailed", "file"];
     if (!valid_modes.includes(mode)) {
       throw new Error(
         `Invalid mode '${mode}'. Valid modes are: ${valid_modes.join(", ")}`,
@@ -76,10 +76,21 @@ class Versalog {
     this.tag = tag ?? "";
     this.notice = notice;
     this.all_save = all_save;
-    const valid_save_levels: LogLevel[] = ['INFO', 'ERROR', 'WARNING', 'DEBUG', 'CRITICAL'];
+    const valid_save_levels: LogLevel[] = [
+      "INFO",
+      "ERROR",
+      "WARNING",
+      "DEBUG",
+      "CRITICAL",
+    ];
     this.save_levels = save_levels ?? [...valid_save_levels];
-    if (!Array.isArray(this.save_levels) || !this.save_levels.every(l => valid_save_levels.includes(l))) {
-      throw new Error(`Invalid save_levels specified. Valid levels are: ${valid_save_levels.join(", ")}`);
+    if (
+      !Array.isArray(this.save_levels) ||
+      !this.save_levels.every((l) => valid_save_levels.includes(l))
+    ) {
+      throw new Error(
+        `Invalid save_levels specified. Valid levels are: ${valid_save_levels.join(", ")}`,
+      );
     }
     this.silent = silent;
     this.catch_exceptions = catch_exceptions;
@@ -121,9 +132,20 @@ class Versalog {
     if (options.notice !== undefined) this.notice = options.notice;
     if (options.all_save !== undefined) this.all_save = options.all_save;
     if (options.save_levels !== undefined) {
-      const valid_save_levels: LogLevel[] = ['INFO', 'ERROR', 'WARNING', 'DEBUG', 'CRITICAL'];
-      if (!Array.isArray(options.save_levels) || !options.save_levels.every(l => valid_save_levels.includes(l))) {
-        throw new Error(`Invalid save_levels specified. Valid levels are: ${valid_save_levels.join(", ")}`);
+      const valid_save_levels: LogLevel[] = [
+        "INFO",
+        "ERROR",
+        "WARNING",
+        "DEBUG",
+        "CRITICAL",
+      ];
+      if (
+        !Array.isArray(options.save_levels) ||
+        !options.save_levels.every((l) => valid_save_levels.includes(l))
+      ) {
+        throw new Error(
+          `Invalid save_levels specified. Valid levels are: ${valid_save_levels.join(", ")}`,
+        );
       }
       this.save_levels = options.save_levels;
     }
