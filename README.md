@@ -1,9 +1,7 @@
 ## What is VersaLog.js?
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![npm version](https://img.shields.io/npm/v/versalog.svg?style=flat-square)](https://www.npmjs.com/package/versalog)
@@ -59,7 +57,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kaedeek"><img src="https://avatars.githubusercontent.com/u/170544738?v=4?s=100" width="100px;" alt="ₖₐₑ𝒹ₑ"/><br /><sub><b>ₖₐₑ𝒹ₑ</b></sub></a><br /><a href="https://github.com/kayu0514/VersaLog.js/commits?author=kaedeek" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kaedeek"><img src="https://avatars.githubusercontent.com/u/170544738?v=4?s=100" width="100px;" alt="ₖₐₑ𝒹ₑ"/><br /><sub><b>ₖₐₑ𝒹ₑ</b></sub></a><br /><a href="https://github.com/VersaLog/VersaLog.js/commits?author=kaedeek" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://yomi4486.xenfo.org"><img src="https://avatars.githubusercontent.com/u/105367179?v=4?s=100" width="100px;" alt="yomi4486"/><br /><sub><b>yomi4486</b></sub></a><br /><a href="https://github.com/VersaLog/VersaLog.js/commits?author=yomi4486" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
