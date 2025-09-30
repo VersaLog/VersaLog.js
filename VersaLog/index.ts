@@ -5,13 +5,6 @@ const notifier = require("node-notifier");
 import * as fs from "fs";
 import * as path from "path";
 
-export enum VersaLogMode {
-  simple = "simple",
-  simple2 = "simple2",
-  detailed = "detailed",
-  file = "file",
-}
-
 const COLORS: Record<string, string> = {
   INFO: "\x1b[32m",
   ERROR: "\x1b[31m",
@@ -344,4 +337,4 @@ class Versalog {
   }
 }
 
-export default Versalog;
+export = Versalog;
