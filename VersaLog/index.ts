@@ -1,13 +1,15 @@
+type LogMode = 'simple' | 'simple2' | 'detailed' | 'file';
+type LogLevel = 'INFO' | 'ERROR' | 'WARNING' | 'DEBUG' | 'CRITICAL';
 import { format } from "date-fns";
 const notifier = require("node-notifier");
 import * as fs from "fs";
 import * as path from "path";
 
 export enum VersaLogMode {
-  SIMPLE = "simple",
-  SIMPLE2 = "simple2",
-  DETAILED = "detailed",
-  FILE = "file",
+  simple = "simple",
+  simple2 = "simple2",
+  detailed = "detailed",
+  file = "file",
 }
 
 const COLORS: Record<string, string> = {
@@ -29,13 +31,13 @@ const SYMBOLS: Record<string, string> = {
 const RESET = "\x1b[0m";
 
 class Versalog {
-  public mode: VersaLogMode;
+  public mode: LogMode;
   public tag: string;
   public show_file: boolean;
   public show_tag: boolean;
   public notice: boolean;
   public all_save: boolean;
-  public save_levels: string[];
+  public save_levels: LogLevel[];
   public silent: boolean;
   private log_queue: Array<{ log_text: string; level: string }> = [];
   private is_worker_running: boolean = false;
@@ -43,14 +45,14 @@ class Versalog {
   private last_cleanup_date: string | null = null;
 
   constructor(
-    mode: VersaLogMode = VersaLogMode.SIMPLE,
+    mode: LogMode = 'simple',
     show_file: boolean = false,
     show_tag: boolean = false,
     tag: string | null = null,
     enable_all: boolean = false,
     notice: boolean = false,
     all_save: boolean = false,
-    save_levels: string[] | null = null,
+    save_levels: LogLevel[] | null = null,
     silent: boolean = false,
     catch_exceptions: boolean = false,
   ) {
@@ -61,7 +63,7 @@ class Versalog {
       all_save = true;
     }
 
-    const valid_modes = Object.values(VersaLogMode);
+    const valid_modes: LogMode[] = ['simple', 'simple2', 'detailed', 'file'];
     if (!valid_modes.includes(mode)) {
       throw new Error(
         `Invalid mode '${mode}'. Valid modes are: ${valid_modes.join(", ")}`,
@@ -74,21 +76,10 @@ class Versalog {
     this.tag = tag ?? "";
     this.notice = notice;
     this.all_save = all_save;
-    this.save_levels = save_levels ?? [
-      "INFO",
-      "ERROR",
-      "WARNING",
-      "DEBUG",
-      "CRITICAL",
-    ];
-    const valid_save_levels = ["INFO", "ERROR", "WARNING", "DEBUG", "CRITICAL"];
-    if (
-      !Array.isArray(this.save_levels) ||
-      !this.save_levels.every((l) => valid_save_levels.includes(l))
-    ) {
-      throw new Error(
-        `Invalid save_levels specified. Valid levels are: ${valid_save_levels.join(", ")}`,
-      );
+    const valid_save_levels: LogLevel[] = ['INFO', 'ERROR', 'WARNING', 'DEBUG', 'CRITICAL'];
+    this.save_levels = save_levels ?? [...valid_save_levels];
+    if (!Array.isArray(this.save_levels) || !this.save_levels.every(l => valid_save_levels.includes(l))) {
+      throw new Error(`Invalid save_levels specified. Valid levels are: ${valid_save_levels.join(", ")}`);
     }
     this.silent = silent;
     this.catch_exceptions = catch_exceptions;
@@ -103,14 +94,14 @@ class Versalog {
   }
 
   public setConfig(options: {
-    mode?: VersaLogMode;
+    mode?: LogMode;
     show_file?: boolean;
     show_tag?: boolean;
     tag?: string;
     enable_all?: boolean;
     notice?: boolean;
     all_save?: boolean;
-    save_levels?: string[];
+    save_levels?: LogLevel[];
     silent?: boolean;
     catch_exceptions?: boolean;
   }): void {
@@ -122,12 +113,6 @@ class Versalog {
     }
 
     if (options.mode !== undefined) {
-      const valid_modes = Object.values(VersaLogMode);
-      if (!valid_modes.includes(options.mode)) {
-        throw new Error(
-          `Invalid mode '${options.mode}'. Valid modes are: ${valid_modes.join(", ")}`,
-        );
-      }
       this.mode = options.mode;
     }
     if (options.show_file !== undefined) this.show_file = options.show_file;
@@ -135,8 +120,13 @@ class Versalog {
     if (options.tag !== undefined) this.tag = options.tag;
     if (options.notice !== undefined) this.notice = options.notice;
     if (options.all_save !== undefined) this.all_save = options.all_save;
-    if (options.save_levels !== undefined)
+    if (options.save_levels !== undefined) {
+      const valid_save_levels: LogLevel[] = ['INFO', 'ERROR', 'WARNING', 'DEBUG', 'CRITICAL'];
+      if (!Array.isArray(options.save_levels) || !options.save_levels.every(l => valid_save_levels.includes(l))) {
+        throw new Error(`Invalid save_levels specified. Valid levels are: ${valid_save_levels.join(", ")}`);
+      }
       this.save_levels = options.save_levels;
+    }
     if (options.silent !== undefined) this.silent = options.silent;
     if (options.catch_exceptions !== undefined) {
       this.catch_exceptions = options.catch_exceptions;
@@ -170,7 +160,7 @@ class Versalog {
   }
 
   private save_log(log_text: string, level: string): void {
-    if (!this.save_levels.includes(level)) return;
+    if (!this.save_levels.includes(level as LogLevel)) return;
     this.log_queue.push({ log_text, level });
     this.run_worker();
 
@@ -306,7 +296,7 @@ class Versalog {
     if (!this.silent) {
       console.log(formatted);
     }
-    if (this.all_save && this.save_levels.includes(types)) {
+    if (this.all_save && this.save_levels.includes(types as LogLevel)) {
       this.save_log(plain, types);
     }
   }
