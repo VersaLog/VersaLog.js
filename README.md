@@ -20,9 +20,9 @@ It supports everything from simple usage to advanced, highly customizable config
 npm i versalog
 ```
 
-### Mode
+### Enum
 
-| Mode       | Description                                                                  |
+| Enum       | Description                                                                  |
 | ---------- | ---------------------------------------------------------------------------- |
 | `detailed` | Logs including execution time and log levels                                 |
 | `file`     | Logs with filename and line number                                           |
