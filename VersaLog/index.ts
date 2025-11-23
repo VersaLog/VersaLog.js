@@ -25,7 +25,7 @@ const RESET = "\x1b[0m";
 
 class Versalog {
   public mode: LogMode;
-  public tag: string;
+  public tag: string | string[];
   public show_file: boolean;
   public show_tag: boolean;
   public notice: boolean;
@@ -41,7 +41,7 @@ class Versalog {
     mode: LogMode = "simple",
     show_file: boolean = false,
     show_tag: boolean = false,
-    tag: string | null = null,
+    tag: string | string[] = "",
     enable_all: boolean = false,
     notice: boolean = false,
     all_save: boolean = false,
@@ -66,7 +66,13 @@ class Versalog {
     this.mode = mode;
     this.show_file = show_file;
     this.show_tag = show_tag;
-    this.tag = tag ?? "";
+    if (Array.isArray(tag)) {
+      this.tag = tag;
+    } else if (typeof tag === "string") {
+      this.tag = tag ? [tag] : [];
+    } else {
+      this.tag = [];
+    }
     this.notice = notice;
     this.all_save = all_save;
     const valid_save_levels: LogLevel[] = [
@@ -101,7 +107,7 @@ class Versalog {
     mode?: LogMode;
     show_file?: boolean;
     show_tag?: boolean;
-    tag?: string;
+    tag?: string | string[];
     enable_all?: boolean;
     notice?: boolean;
     all_save?: boolean;
@@ -121,7 +127,15 @@ class Versalog {
     }
     if (options.show_file !== undefined) this.show_file = options.show_file;
     if (options.show_tag !== undefined) this.show_tag = options.show_tag;
-    if (options.tag !== undefined) this.tag = options.tag;
+    if (options.tag !== undefined) {
+      if (Array.isArray(options.tag)) {
+        this.tag = options.tag;
+      } else if (typeof options.tag === "string") {
+        this.tag = options.tag ? [options.tag] : [];
+      } else {
+        this.tag = [];
+      }
+    }
     if (options.notice !== undefined) this.notice = options.notice;
     if (options.all_save !== undefined) this.all_save = options.all_save;
     if (options.save_levels !== undefined) {
@@ -239,12 +253,24 @@ class Versalog {
     });
   }
 
-  private Log(msg: string, tye: string, tag?: string): void {
+  private Log(msg: string, tye: string, tag?: string | string[]): void {
     const color = COLORS[tye] ?? "";
     const symbol = SYMBOLS[tye] ?? "[?]";
     const types = tye.toUpperCase();
 
-    const finalTag = tag ?? (this.show_tag ? this.tag : "");
+    const tags: string[] = [];
+    if (this.show_tag) {
+      if (Array.isArray(this.tag)) {
+        tags.push(...this.tag);
+      } else if (this.tag) {
+        tags.push(this.tag);
+      }
+      if (tag) {
+        if (Array.isArray(tag)) tags.push(...tag);
+        else tags.push(tag);
+      }
+    }
+    const tagStr = tags.length > 0 ? tags.map(t => `[${t}]`).join("") : "";
     const caller =
       this.show_file || this.mode === "file" ? this.GetCaller() : "";
 
@@ -264,23 +290,23 @@ class Versalog {
       if (this.show_file) {
         formatted += `[${caller}]`;
       }
-      if (finalTag) formatted += `[${finalTag}]`;
+      formatted += tagStr;
       formatted += `${color}${symbol}${RESET} ${msg}`;
       plain =
         (this.show_file ? `[${caller}]` : "") +
-        (finalTag ? `[${finalTag}]` : "") +
+        tagStr +
         `${symbol} ${msg}`;
     } else if (this.mode === "simple2") {
       const time = this.GetTime();
       if (this.show_file) {
         formatted = `[${time}]`;
         if (caller) formatted += ` [${caller}]`;
-        if (finalTag) formatted += `[${finalTag}]`;
+        formatted += tagStr;
         formatted += `${color}${symbol}${RESET} ${msg}`;
         plain =
           `[${time}]` +
           (caller ? ` [${caller}]` : "") +
-          (finalTag ? `[${finalTag}]` : "") +
+          tagStr +
           `${symbol} ${msg}`;
       } else {
         formatted = `[${time}] ${color}${symbol}${RESET} ${msg}`;
@@ -288,17 +314,17 @@ class Versalog {
       }
     } else if (this.mode === "file") {
       formatted = `[${caller}]`;
-      if (finalTag) formatted += `[${finalTag}]`;
+      formatted += tagStr;
       formatted += `${color}[${types}]${RESET} ${msg}`;
       plain =
-        `[${caller}]` + (finalTag ? `[${finalTag}]` : "") + `[${types}] ${msg}`;
+        `[${caller}]` + tagStr + `[${types}] ${msg}`;
     } else {
       const time = this.GetTime();
       formatted = `[${time}]${color}[${types}]${RESET}`;
       plain = `[${time}][${types}]`;
-      if (finalTag) {
-        formatted += `[${finalTag}]`;
-        plain += `[${finalTag}]`;
+      if (tagStr) {
+        formatted += tagStr;
+        plain += tagStr;
       }
       if (this.show_file) {
         formatted += `[${caller}]`;
@@ -316,24 +342,28 @@ class Versalog {
     }
   }
 
-  public info(msg: string, tag?: string): void {
+  public info(msg: string, tag?: string | string[]): void {
     this.Log(msg, "INFO", tag);
   }
 
-  public error(msg: string, tag?: string): void {
+  public error(msg: string, tag?: string | string[]): void {
     this.Log(msg, "ERROR", tag);
   }
 
-  public warning(msg: string, tag?: string): void {
+  public warning(msg: string, tag?: string | string[]): void {
     this.Log(msg, "WARNING", tag);
   }
 
-  public debug(msg: string, tag?: string): void {
+  public debug(msg: string, tag?: string | string[]): void {
     this.Log(msg, "DEBUG", tag);
   }
 
-  public critical(msg: string, tag?: string): void {
+  public critical(msg: string, tag?: string | string[]): void {
     this.Log(msg, "CRITICAL", tag);
+  }
+
+  public board(): void {
+    console.log("=".repeat(45));
   }
 }
 
