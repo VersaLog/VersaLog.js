@@ -21,7 +21,7 @@ Join our Discord server for support, questions, and community discussions:
 ## Installation
 
 ```
-npm i versalog
+npm install versalog
 ```
 
 ### Enum
