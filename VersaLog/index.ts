@@ -398,5 +398,5 @@ class Versalog {
     }
   }
 
-
+}
 export = Versalog;
