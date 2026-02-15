@@ -365,6 +365,38 @@ class Versalog {
   public board(): void {
     console.log("=".repeat(45));
   }
-}
+
+  public progress(title: string, current: number, total: number, tag?: string | string[]): void {
+    const percent = total ? Math.floor((current / total) * 100) : 0;
+    const msg = `${title} : ${percent}% (${current}/${total})`;
+    this.Log(msg, "INFO", tag);
+  }
+
+  public step(title: string, step: number, total: number, tag?: string | string[]): void {
+    const msg = `[STEP ${step}/${total}] ${title}`;
+    this.Log(msg, "INFO", tag);
+  }
+
+  public async timer(
+    title: string,
+    fn: () => Promise<void> | void,
+    tag?: string | string[]
+  ): Promise<void> {
+    const start = Date.now();
+    
+    this.Log(`${title} : start`, "INFO", tag);
+    
+    try {
+      await fn();
+    } finally {
+      const elapsed = (Date.now() - start) / 1000;
+      this.Log(
+        `${title} : done (${elapsed.toFixed(2)}s)`,
+        "INFO",
+        tag
+      );
+    }
+  }
+
 
 export = Versalog;
