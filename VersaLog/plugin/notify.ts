@@ -6,6 +6,6 @@ export const notifyPlugin = (log: any) => {
       title,
       message,
       appName: "VersaLog",
-    });
+    } as any);
   });
 };
